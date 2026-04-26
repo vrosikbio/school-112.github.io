@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Выпускной альбом - Graduation 2025 • 9 Б</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="glow"></div>
+<div class="cursor" id="cursor"></div>
+
+<div class="intro" id="intro">
+  <div class="intro-content">
+    <h2>Graduation 2025</h2>
+    <p>9 Б • 2025</p>
+    <p class="intro-subtitle">Нажмите</p>
+  </div>
+</div>
+
+<header class="header">
+  <div class="header-content">
+    <h1 class="logo">Выпускной 9 Б 2025</h1>
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Поиск по имени...">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="m21 21-4.35-4.35"></path>
+      </svg>
+    </div>
+    <div class="filter-buttons">
+      <button class="filter-btn active" data-filter="all">Все</button>
+      <button class="filter-btn" data-filter="teacher">Учителя</button>
+      <button class="filter-btn" data-filter="student">Ученики</button>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="stats" style="display: none;">
+    <span id="count">Всего: 35</span>
+  </div>
+  <div class="featured-section">
+    <div class="featured-card card" id="featuredCard">
+      <img src="images/1.jpg" alt="Светлана Николаевна">
+      <div class="overlay">
+        <div class="role">Классный руководитель</div>
+        <div class="name">Светлана Николаевна</div>
+      </div>
+      <div class="featured-badge">★ Классный руководитель</div>
+    </div>
+  </div>
+  <div class="grid" id="gallery"></div>
+</div>
+
+<footer class="footer">
+  <p>Graduation Album 9 Б • Лучшие моменты выпускного 2025</p>
+  <p class="footer-support">📱 Поддержка сайта возможно прекратится: <strong>23.05.2026</strong></p>
+  <p class="footer-year">© 2025</p>
+</footer>
+
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <button class="close" aria-label="Закрыть">&times;</button>
+    <img id="modalImg" alt="">
+    <div class="modal-info">
+      <div id="modalName"></div>
+      <div id="modalPosition"></div>
+      <div class="modal-nav">
+        <button class="nav-btn prev" aria-label="Предыдущее">‹</button>
+        <span id="imageCounter"></span>
+        <button class="nav-btn next" aria-label="Следующее">›</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Данные о людях
+const people = [
+  // Классный руководитель
+  { id: 1, name: 'Светлана Николаевна', position: 'Классный руководитель', type: 'teacher', image: 'images/1.jpg' },
+  
+  // Учителя
+  { id: 2, name: 'Быкодерова И.А.', position: 'Уч. нач. классов', type: 'teacher', image: 'images/2.jpg' },
+  { id: 3, name: 'Григорьева С.К.', position: 'Заместитель директора', type: 'teacher', image: 'images/3.jpg' },
+  { id: 4, name: 'Кандаурова Т.Н.', position: 'Директор', type: 'teacher', image: 'images/4.jpg' },
+  { id: 5, name: 'Заруднева О.А.', position: 'Уч. русского языка', type: 'teacher', image: 'images/5.jpg' },
+  { id: 6, name: 'Петикова А.А.', position: 'Уч. информатики', type: 'teacher', image: 'images/6.jpg' },
+  { id: 7, name: 'Коваженкова С.Е.', position: 'Уч. истории', type: 'teacher', image: 'images/7.jpg' },
+  { id: 8, name: 'Бунеев Д.А.', position: 'Уч. англ. языка', type: 'teacher', image: 'images/8.jpg' },
+  { id: 9, name: 'Кадина В.В.', position: 'Уч. технологии', type: 'teacher', image: 'images/9.jpg' },
+  { id: 10, name: 'Седлецкая И.В.', position: 'Уч. физкультуры', type: 'teacher', image: 'images/10.jpg' },
+  
+  // Ученики
+  { id: 11, name: 'Виктория', position: 'Ученик', type: 'student', image: 'images/11.jpg' },
+  { id: 12, name: 'Светлана', position: 'Ученик', type: 'student', image: 'images/12.jpg' },
+  { id: 13, name: 'Максим', position: 'Ученик', type: 'student', image: 'images/13.jpg' },
+  { id: 14, name: 'Ярослав', position: 'Ученик', type: 'student', image: 'images/14.jpg' },
+  { id: 15, name: 'Анатолий', position: 'Ученик', type: 'student', image: 'images/15.jpg' },
+  { id: 16, name: 'София', position: 'Ученик', type: 'student', image: 'images/16.jpg' },
+  { id: 17, name: 'Михаил', position: 'Ученик', type: 'student', image: 'images/17.jpg' },
+  { id: 18, name: 'Артем', position: 'Ученик', type: 'student', image: 'images/18.jpg' },
+  { id: 19, name: 'Дмитрий', position: 'Ученик', type: 'student', image: 'images/19.jpg' },
+  { id: 20, name: 'Маргарита', position: 'Ученик', type: 'student', image: 'images/20.jpg' },
+  { id: 21, name: 'Сергей', position: 'Ученик', type: 'student', image: 'images/21.jpg' },
+  { id: 22, name: 'Максим', position: 'Ученик', type: 'student', image: 'images/22.jpg' },
+  { id: 23, name: 'Алла', position: 'Ученик', type: 'student', image: 'images/23.jpg' },
+  { id: 24, name: 'Вероника', position: 'Ученик', type: 'student', image: 'images/24.jpg' },
+  { id: 25, name: 'Владислав', position: 'Ученик', type: 'student', image: 'images/25.jpg' },
+  { id: 26, name: 'Антон', position: 'Ученик', type: 'student', image: 'images/26.jpg' },
+  { id: 27, name: 'Михаил', position: 'Ученик', type: 'student', image: 'images/27.jpg' },
+  { id: 28, name: 'Артем', position: 'Ученик', type: 'student', image: 'images/28.jpg' },
+  { id: 29, name: 'Диана', position: 'Ученик', type: 'student', image: 'images/29.jpg' },
+  { id: 30, name: 'Варвара', position: 'Ученик', type: 'student', image: 'images/30.jpg' },
+  { id: 31, name: 'Анастасия', position: 'Ученик', type: 'student', image: 'images/31.jpg' },
+  { id: 32, name: 'Андрей', position: 'Ученик', type: 'student', image: 'images/32.jpg' },
+  { id: 33, name: 'Юлия', position: 'Ученик', type: 'student', image: 'images/33.jpg' },
+  { id: 34, name: 'Алина', position: 'Ученик', type: 'student', image: 'images/34.jpg' },
+  { id: 35, name: 'Артем', position: 'Ученик', type: 'student', image: 'images/35.jpg' }
+];
+
+const intro = document.getElementById('intro');
+const gallery = document.getElementById('gallery');
+const modal = document.getElementById('modal');
+const modalImg = document.getElementById('modalImg');
+const modalName = document.getElementById('modalName');
+const modalPosition = document.getElementById('modalPosition');
+const imageCounter = document.getElementById('imageCounter');
+const searchInput = document.getElementById('searchInput');
+const filterButtons = document.querySelectorAll('.filter-btn');
+const countEl = document.getElementById('count');
+const closeBtn = document.querySelector('.close');
+
+let current = 0;
+let currentFilter = 'all';
+let filteredPeople = [];
+
+// Закрытие интро
+intro.addEventListener('click', () => intro.classList.add('hidden'));
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && !intro.classList.contains('hidden')) {
+    intro.classList.add('hidden');
+  }
+});
+
+// Создание карточек
+function renderGallery() {
+  gallery.innerHTML = '';
+  filteredPeople = [];
+  
+  people.forEach((person) => {
+    // Пропускаем Светлану Николаевну (она в featured)
+    if (person.id === 1) return;
+    
+    // Применяем фильтр и поиск
+    if (currentFilter !== 'all' && person.type !== currentFilter) return;
+    if (searchInput.value && !person.name.toLowerCase().includes(searchInput.value.toLowerCase())) return;
+    
+    filteredPeople.push(person);
+    
+    const card = document.createElement('div');
+    card.className = 'card fade';
+    card.setAttribute('data-type', person.type);
+    card.innerHTML = `
+      <img src="${person.image}" alt="${person.name}" loading="lazy">
+      <div class="overlay">
+        <div class="role">${person.type === 'teacher' ? person.position : 'Ученик'}</div>
+        <div class="name">${person.name}</div>
+      </div>
+    `;
+    card.addEventListener('click', () => openModal(person));
+    gallery.appendChild(card);
+  });
+  
+  // Анимация появления
+  setTimeout(() => {
+    document.querySelectorAll('.card.fade').forEach(el => el.classList.add('visible'));
+  }, 10);
+  
+  countEl.textContent = `Всего: ${filteredPeople.length}`;
+}
+
+function openModal(person) {
+  current = person.id;
+  modal.classList.add('active');
+  modalImg.src = person.image;
+  modalName.textContent = person.name;
+  modalPosition.textContent = person.position;
+  const index = filteredPeople.findIndex(p => p.id === person.id);
+  imageCounter.textContent = `${index + 1} / ${filteredPeople.length}`;
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  modal.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+closeBtn.addEventListener('click', closeModal);
+modal.addEventListener('click', (e) => {
+  if (e.target === modal) closeModal();
+});
+
+// Навигация в модальном окне
+document.querySelector('.nav-btn.prev').addEventListener('click', (e) => {
+  e.stopPropagation();
+  const currentIndex = filteredPeople.findIndex(p => p.id === current);
+  const newIndex = currentIndex > 0 ? currentIndex - 1 : filteredPeople.length - 1;
+  openModal(filteredPeople[newIndex]);
+});
+
+document.querySelector('.nav-btn.next').addEventListener('click', (e) => {
+  e.stopPropagation();
+  const currentIndex = filteredPeople.findIndex(p => p.id === current);
+  const newIndex = currentIndex < filteredPeople.length - 1 ? currentIndex + 1 : 0;
+  openModal(filteredPeople[newIndex]);
+});
+
+// Клавиатурная навигация
+window.addEventListener('keydown', (e) => {
+  if (!modal.classList.contains('active')) return;
+  if (e.key === 'ArrowRight') {
+    document.querySelector('.nav-btn.next').click();
+  }
+  if (e.key === 'ArrowLeft') {
+    document.querySelector('.nav-btn.prev').click();
+  }
+  if (e.key === 'Escape') {
+    closeModal();
+  }
+});
+
+// Фильтры
+filterButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    filterButtons.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    renderGallery();
+  });
+});
+
+// Поиск
+searchInput.addEventListener('input', renderGallery);
+
+// Кастомный курсор
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', (e) => {
+  cursor.style.left = (e.clientX - 5) + 'px';
+  cursor.style.top = (e.clientY - 5) + 'px';
+});
+
+// Инициализация
+renderGallery();
+
+// Клик на карточку Светланы Николаевны
+const featuredCard = document.getElementById('featuredCard');
+if (featuredCard) {
+  featuredCard.addEventListener('click', () => {
+    openModal(people[0]);
+  });
+}
+</script>
+
+</body>
+</html>
